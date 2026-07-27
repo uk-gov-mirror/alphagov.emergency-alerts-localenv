@@ -108,6 +108,38 @@ services:
       - pg
       - localstack
 
+  api-dlq-watcher:
+    build:
+      context: repos/emergency-alerts-api
+      dockerfile: Dockerfile.eas-api
+      args:
+        BASE_IMAGE: localhost/eas-localenv-base
+    image: localhost/eas-localenv-api
+    restart: always
+    command:
+      - bash
+      - -c
+      - . /eas/emergency-alerts-api/environment.sh && bash /start-api.sh
+    environment:
+      SERVICE_ACTION: run_dlq_watcher
+
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://jaeger:4318/v1/traces
+      OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: http/protobuf
+      OTEL_TRACES_SAMPLER: always_on
+      OTEL_SERVICE_NAME: api-dlq-watcher
+      OTEL_METRICS_EXPORTER: none
+    volumes:
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/repos/emergency-alerts-api:/eas/emergency-alerts-api:z
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/repos/emergency-alerts-utils:/eas/emergency-alerts-utils:z
+
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/environment.sh:/eas/emergency-alerts-api/environment.sh:ro,z
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/repos/emergency-alerts-api/scripts/start-api.sh:/start-api.sh:ro,z
+    extra_hosts:
+      - "api:host-gateway"
+    depends_on:
+      - pg
+      - localstack
+
   admin:
     build:
       context: repos/emergency-alerts-admin

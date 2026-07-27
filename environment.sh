@@ -13,6 +13,9 @@ export AWS_ENDPOINT_URL_S3=http://localstack:4566
 export AWS_ENDPOINT_URL_SES=http://localstack:4566
 export AWS_ENDPOINT_URL_SSM=http://localstack:4566
 
+export DLQ_URL="http://sqs.us-east-1.localstack:4566/000000000000/local-dramatiq-dlq"
+export FAILED_QUEUE_URL="http://sqs.us-east-1.localstack:4566/000000000000/local-dramatiq-failed"
+
 export FLASK_APP=application.py
 export FLASK_DEBUG=False
 export WERKZEUG_DEBUG_PIN=off

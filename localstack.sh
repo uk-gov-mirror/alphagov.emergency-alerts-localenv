@@ -5,10 +5,24 @@ set -ex
 DLQ_URL=$(awslocal sqs create-queue --queue-name local-dramatiq-dlq --attributes VisibilityTimeout=300 --query 'QueueUrl' --output text)
 DLQ_ARN=$(awslocal sqs get-queue-attributes --queue-url "$DLQ_URL" --attribute-names QueueArn --query 'Attributes.QueueArn' --output text)
 
-awslocal sqs create-queue --queue-name local-dramatiq-periodic-tasks --attributes "VisibilityTimeout=300,RedrivePolicy='{\"deadLetterTargetArn\":\"$DLQ_ARN\",\"maxReceiveCount\":\"3\"}'"
-awslocal sqs create-queue --queue-name local-dramatiq-govuk-alerts --attributes "VisibilityTimeout=300,RedrivePolicy='{\"deadLetterTargetArn\":\"$DLQ_ARN\",\"maxReceiveCount\":\"3\"}'"
-awslocal sqs create-queue --queue-name local-dramatiq-broadcast-tasks --attributes "VisibilityTimeout=300,RedrivePolicy='{\"deadLetterTargetArn\":\"$DLQ_ARN\",\"maxReceiveCount\":\"3\"}'"
-awslocal sqs create-queue --queue-name local-dramatiq-high-priority-tasks --attributes "VisibilityTimeout=300,RedrivePolicy='{\"deadLetterTargetArn\":\"$DLQ_ARN\",\"maxReceiveCount\":\"3\"}'"
+awslocal sqs create-queue --queue-name local-dramatiq-failed --attributes VisibilityTimeout=300
+
+awslocal sqs create-queue --queue-name local-dramatiq-periodic-tasks --attributes '{
+  "RedrivePolicy": "{\"deadLetterTargetArn\":\"'"$DLQ_ARN"'\",\"maxReceiveCount\":\"3\"}",
+  "VisibilityTimeout": "300"
+}'
+awslocal sqs create-queue --queue-name local-dramatiq-govuk-alerts --attributes '{
+  "RedrivePolicy": "{\"deadLetterTargetArn\":\"'"$DLQ_ARN"'\",\"maxReceiveCount\":\"3\"}",
+  "VisibilityTimeout": "300"
+}'
+awslocal sqs create-queue --queue-name local-dramatiq-broadcast-tasks --attributes '{
+  "RedrivePolicy": "{\"deadLetterTargetArn\":\"'"$DLQ_ARN"'\",\"maxReceiveCount\":\"3\"}",
+  "VisibilityTimeout": "300"
+}'
+awslocal sqs create-queue --queue-name local-dramatiq-high-priority-tasks --attributes '{
+  "RedrivePolicy": "{\"deadLetterTargetArn\":\"'"$DLQ_ARN"'\",\"maxReceiveCount\":\"3\"}",
+  "VisibilityTimeout": "300"
+}'
 
 # Create S3 buckets
 awslocal s3 mb s3://local-govuk-alerts
