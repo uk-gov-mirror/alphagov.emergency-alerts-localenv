@@ -1,0 +1,80 @@
+{
+  "configurations": [
+    {
+      "name": "API: Container Attach",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "port": 3011,
+      },
+      "justMyCode": false,
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/repos/emergency-alerts-api",
+          "remoteRoot": "/eas/emergency-alerts-api",
+        },
+        {
+          "localRoot": "${workspaceFolder}/repos/emergency-alerts-utils",
+          "remoteRoot": "/eas/emergency-alerts-utils",
+        }
+      ]
+    },
+    {
+      "name": "API Worker: Container Attach",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "port": 3010,
+      },
+      "justMyCode": false,
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/repos/emergency-alerts-api",
+          "remoteRoot": "/eas/emergency-alerts-api",
+        },
+        {
+          "localRoot": "${workspaceFolder}/repos/emergency-alerts-utils",
+          "remoteRoot": "/eas/emergency-alerts-utils",
+        }
+      ]
+    },
+    {
+      "name": "Admin: Container Attach",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "port": 3012,
+      },
+      "justMyCode": false,
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/repos/emergency-alerts-admin",
+          "remoteRoot": "/eas/emergency-alerts-admin",
+        },
+        {
+          "localRoot": "${workspaceFolder}/repos/emergency-alerts-utils",
+          "remoteRoot": "/eas/emergency-alerts-utils",
+        }
+      ]
+    },
+    {
+      "name": "GovUK: Container Attach",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "port": 3017,
+      },
+      "justMyCode": false,
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/repos/emergency-alerts-govuk",
+          "remoteRoot": "/eas/emergency-alerts-govuk",
+        },
+        {
+          "localRoot": "${workspaceFolder}/repos/emergency-alerts-utils",
+          "remoteRoot": "/eas/emergency-alerts-utils",
+        }
+      ]
+    },
+  ]
+}

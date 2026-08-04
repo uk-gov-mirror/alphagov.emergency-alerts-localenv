@@ -1,13 +1,15 @@
 # Emergency Alerts Localenv
 
 This is a opinionated and unperfect Docker Compose-based instance of the Emergency Alerts system in a turnkey fashion.
+It also forms part of a development environment, with a VS Code workspace mostly pre-configured to work across repos.
+There is also a devcontainer configuration, but this is experimental and may not work for your needs.
+
 It will use the exact same Dockerfiles as used to build the main system as well as approximations of AWS components running locally.
 You may of course run components manually, or only use a subset of these components.
 Containers will bind-mount the actual relevant repos in, so applications changes can take effect after a simple container restart instead of rebuilding them.
 
 Notably it does *not* include the Cell Broadcast Controller Proxy functionality (a Lambda). 'Sending' a broadcast will almost immediately pass via a very silly hardcoded response (the 'lambda' container).
 
-There is also a devcontainer configuration, but this is experimental and may not work for your needs.
 
 ## Getting started
 
@@ -24,6 +26,7 @@ git clone https://github.com/alphagov/emergency-alerts-govuk.git
 git clone https://github.com/alphagov/emergency-alerts-utils.git
 git clone https://github.com/alphagov/emergency-alerts-tooling.git
 git clone https://github.com/alphagov/emergency-alerts-admin.git
+git clone https://github.com/alphagov/emergency-alerts-functional-tests.git
 ```
 
 Running on Linux? Make sure the repos have rw for everyone - as the containers run as non-root and will need access to bind mounts of their respective repo folders.
@@ -59,14 +62,19 @@ source venv/bin/activate; make bootstrap; deactivate
 cd ../emergency-alerts-utils
 python -m venv venv
 source venv/bin/activate; make bootstrap; deactivate
+cd ../emergency-alerts-functional-tests
+python -m venv venv
+source venv/bin/activate; make bootstrap; deactivate
 ```
 
 Admin requires a large SQLite Database of location libraries. You can fetch this from the `infra-mgt` AWS account in an S3 bucket.
 It will need copying to `emergency-alerts-localenv/repos/emergency-alerts-admin/app/broadcast_areas/broadcast-areas.sqlite3`.
 
-Modify the `emergency-alerts-localenv/environment.sh` file by adding the credentials for the environment variables:
+Modify the `emergency-alerts-localenv/environment.env` file by adding the credentials for the environment variables:
  - MASTER_USERNAME
  - MASTER_PASSWORD
+ - TEST_RDS_USER
+ - TEST_RDS_PASSWORD
  - NOTIFY_API_CLIENT_SECRET
  - SECRET_KEY
  - DANGEROUS_SALT
@@ -80,23 +88,28 @@ Modify the `emergency-alerts-localenv/environment.sh` file by adding the credent
 
 In general you can largely make these values up, but you'll only want to set these once for a given DB's lifetime.
 
+You will also need to edit `emergency-alerts-localenv/repos/emergency-alerts-functional-tests/environment-localenv.env`
+to set secrets to match those you defined above.
+
 Now you should be able to ask Docker Compose to come up. We use a shared based image which there isn't great native support for.
 You may also need to ensure Postgres and Localstack are up and running before the others.
 ```
-source environment.sh
+# For Postgres container envs to be populated:
+set -a && source environment.env && set +a
 docker compose up -d --build utils localstack pg jaeger lambda
 docker compose build api
 docker compose up -d api db-init
 docker compose up -d
+```
 
-For debugging:
+If you're debugging outside of the container:
+```
 docker compose stop admin  # then start admin locally on port 6012
 docker compose stop api    # then start api locally on port 6011
 docker compose stop govuk  # then start govuk locally on port 6017
 
 Ensure that you have the follwing `hosts` file entry:
 127.0.0.1 localstack api pg
-
 ```
 
 This should automatically provision Postgres with a test database and auto-populate LocalStack with 'AWS' resources.
