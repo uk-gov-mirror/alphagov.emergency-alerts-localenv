@@ -33,6 +33,7 @@ export GOVUK_ALERTS_BLUE_S3_BUCKET_NAME='local-govuk-alerts-blue'
 export GOVUK_ALERTS_GREEN_S3_BUCKET_NAME='local-govuk-alerts-green'
 export GOVUK_ALERTS_ARCHIVE_S3_BUCKET_NAME='local-govuk-alerts-archive'
 export GOVUK_ALERTS_CURRENT_BUCKET_PARAM='govuk-website-current'
+export MINISCALE_MAP_S3_BUCKET_NAME='local-miniscale-map-data'
 # Cloudfront endpoint not available in free localstack, so disable
 export GOVUK_ALERTS_CLOUDFRONT_ENABLED=false
 export GOVUK_ALERTS_HOST_URL=http://localhost:6017

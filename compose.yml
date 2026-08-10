@@ -223,6 +223,7 @@ services:
     volumes:
       - ${LOCAL_WORKSPACE_FOLDER:-.}/localstack.sh:/etc/localstack/init/ready.d/localstack.sh:ro,z
       - ${LOCAL_WORKSPACE_FOLDER:-.}/area-data:/area-data:ro,z
+      - ${LOCAL_WORKSPACE_FOLDER:-.}/miniscale-map-data:/miniscale-map-data:ro,z
 
   jaeger:
     image: cr.jaegertracing.io/jaegertracing/jaeger:2.15.1
