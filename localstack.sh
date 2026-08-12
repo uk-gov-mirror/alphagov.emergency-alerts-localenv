@@ -30,6 +30,7 @@ awslocal s3 mb s3://local-govuk-alerts-blue
 awslocal s3 mb s3://local-govuk-alerts-green
 awslocal s3 mb s3://local-govuk-alerts-archive
 awslocal s3 mb s3://local-area-sources
+awslocal s3 mb s3://local-miniscale-map-data
 
 # Enable static website hosting
 awslocal s3 website s3://local-govuk-alerts/ \
@@ -50,6 +51,10 @@ awslocal s3 cp /tmp/index.html s3://local-govuk-alerts-blue/index.html
 awslocal s3 cp /tmp/index.html s3://local-govuk-alerts-green/index.html
 awslocal s3 cp /area-data/"$AREAS_SOURCE_VERSION" s3://local-area-sources/"$AREAS_SOURCE_VERSION" --recursive
 awslocal s3 cp /area-data/population_data.csv s3://local-area-sources/population_data.csv
+
+if [ -f "/miniscale-map-data/map.tif" ]; then
+    awslocal s3 cp /miniscale-map-data/map.tif s3://local-miniscale-map-data/map.tif
+fi
 
 # Create ssm parameter to indicate current state of blue/green deployment
 awslocal ssm put-parameter \
