@@ -1,4 +1,4 @@
-id,name,geometry,parent_geography_id
+geographic_id,name,geometry,parent_geography_id
 santa-claus-village-rovaniemi-a,"Santa Claus Village, Rovaniemi A","POLYGON ((25.889 66.55, 25.889 66.551, 25.891 66.551, 25.891 66.55, 25.889 66.55))",
 santa-claus-village-rovaniemi-b,"Santa Claus Village, Rovaniemi B","POLYGON ((25.895 66.577, 25.897 66.577, 25.897 66.578, 25.895 66.578, 25.895 66.577))",
 santa-claus-village-rovaniemi-c,"Santa Claus Village, Rovaniemi C","POLYGON ((25.952 66.572, 25.954 66.572, 25.954 66.573, 25.952 66.573, 25.952 66.572))",
