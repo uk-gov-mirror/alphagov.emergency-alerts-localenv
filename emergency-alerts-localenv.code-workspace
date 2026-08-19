@@ -1,7 +1,8 @@
 {
   "folders": [
     {
-      "path": "."
+      "path": ".",
+      "name": "emergency-alerts-localenv"
     },
     {
       "path": "repos/emergency-alerts-admin"
@@ -41,17 +42,28 @@
       "**/Thumbs.db": true,
       "repos": true,
     },
+    "files.associations": {
+      "*.html": "jinja"
+    },
+    "git.autofetch": true,
+    "python.testing.pytestEnabled": true,
+    "python.envFile": "${workspaceFolder:emergency-alerts-localenv}/environment.env",
+    "python.analysis.extraPaths": [
+      "${workspaceFolder:emergency-alerts-localenv}/repos/emergency-alerts-utils"
+    ],
+    // Code formatting:
+    "editor.formatOnSave": true,
     "flake8.severity": {
       "F": "Warning",
       "E": "Warning",
       "C": "Warning"
     },
-    "editor.formatOnSave": true,
-    "files.associations": {
-      "*.html": "jinja"
+    "black-formatter.importStrategy": "fromEnvironment",
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.black-formatter",
+      "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+      },
     },
-    "json.format.keepLines": true,
-    "git.autofetch": true,
-    "black-formatter.importStrategy": "fromEnvironment"
-  }
+  },
 }

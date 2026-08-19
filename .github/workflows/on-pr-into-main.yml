@@ -1,0 +1,27 @@
+name: on-pr-into-main
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: 3.12
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+    branches:
+      - main
+
+jobs:
+  functional-tests:
+    name: Invoke Functional Tests
+    uses: alphagov/emergency-alerts-functional-tests/.github/workflows/run-functional-tests-pr.yml@main
+    with:
+      env-default: REPO_BRANCH_LOCALENV=${{ github.head_ref }}
+      pr-description: ${{ github.event.pull_request.body }}
+    secrets:
+      EAS_GITHUB_RUNNER_RO_TOKEN: ${{ secrets.EAS_GITHUB_RUNNER_RO_TOKEN }}

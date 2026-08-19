@@ -19,5 +19,11 @@
 	},
 	"remoteEnv": {
 		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
-	}
+	},
+	// Because we use docker-outside-of-docker, localhost in the devcontainer doesn't reach running
+	// services (e.g. functional tests reaching API), so just use the host net so other containers'
+	// port forwarding works.
+	"runArgs": [
+		"--network=host"
+	]
 }

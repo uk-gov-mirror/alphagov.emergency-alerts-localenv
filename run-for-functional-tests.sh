@@ -4,14 +4,14 @@
 
 set -e
 
-echo "##[group]Prep environment.sh"
-# Prep environment.sh with some good-enough values
-sed -i.orig 's/_KEY=$/_KEY='${TEST_SECRET:-test-env}'/' environment.sh
-sed -i.orig 's/_SECRET=$/_SECRET='${TEST_SECRET:-test-env}'/' environment.sh
-sed -i.orig 's/_SALT=$/_SALT='${TEST_SECRET:-test-env}'/' environment.sh
-sed -i.orig 's/POSTGRES_USER=$/POSTGRES_USER=eas-user/' environment.sh
-sed -i.orig 's/MASTER_USERNAME=$/MASTER_USERNAME=eas-user/' environment.sh
-sed -i.orig 's/_PASSWORD=$/_PASSWORD=password/' environment.sh
+echo "##[group]Prep environment.env"
+# Prep environment.env with some good-enough values
+sed -i.orig 's/_KEY=$/_KEY='${TEST_SECRET:-test-env}'/' environment.env
+sed -i.orig 's/_SECRET=$/_SECRET='${TEST_SECRET:-test-env}'/' environment.env
+sed -i.orig 's/_SALT=$/_SALT='${TEST_SECRET:-test-env}'/' environment.env
+sed -i.orig 's/POSTGRES_USER=$/POSTGRES_USER=eas-user/' environment.env
+sed -i.orig 's/MASTER_USERNAME=$/MASTER_USERNAME=eas-user/' environment.env
+sed -i.orig 's/_PASSWORD=$/_PASSWORD=password/' environment.env
 
 echo "##[endgroup]"
 echo "##[group]Clone repositories"
@@ -51,8 +51,13 @@ cd ../../
 set +x
 
 echo "##[endgroup]"
+echo "##[group]Import environment variables"
+set -x
+source environment-container.sh
+set +x
+
+echo "##[endgroup]"
 echo "##[group]Build utils and start ancillaries"
-source environment.sh
 set -x
 docker compose up -d --build utils localstack pg jaeger lambda
 set +x

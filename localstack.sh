@@ -5,10 +5,24 @@ set -ex
 DLQ_URL=$(awslocal sqs create-queue --queue-name local-dramatiq-dlq --attributes VisibilityTimeout=300 --query 'QueueUrl' --output text)
 DLQ_ARN=$(awslocal sqs get-queue-attributes --queue-url "$DLQ_URL" --attribute-names QueueArn --query 'Attributes.QueueArn' --output text)
 
-awslocal sqs create-queue --queue-name local-dramatiq-periodic-tasks --attributes "VisibilityTimeout=300,RedrivePolicy='{\"deadLetterTargetArn\":\"$DLQ_ARN\",\"maxReceiveCount\":\"3\"}'"
-awslocal sqs create-queue --queue-name local-dramatiq-govuk-alerts --attributes "VisibilityTimeout=300,RedrivePolicy='{\"deadLetterTargetArn\":\"$DLQ_ARN\",\"maxReceiveCount\":\"3\"}'"
-awslocal sqs create-queue --queue-name local-dramatiq-broadcast-tasks --attributes "VisibilityTimeout=300,RedrivePolicy='{\"deadLetterTargetArn\":\"$DLQ_ARN\",\"maxReceiveCount\":\"3\"}'"
-awslocal sqs create-queue --queue-name local-dramatiq-high-priority-tasks --attributes "VisibilityTimeout=300,RedrivePolicy='{\"deadLetterTargetArn\":\"$DLQ_ARN\",\"maxReceiveCount\":\"3\"}'"
+awslocal sqs create-queue --queue-name local-dramatiq-failed --attributes VisibilityTimeout=300
+
+awslocal sqs create-queue --queue-name local-dramatiq-periodic-tasks --attributes '{
+  "RedrivePolicy": "{\"deadLetterTargetArn\":\"'"$DLQ_ARN"'\",\"maxReceiveCount\":\"3\"}",
+  "VisibilityTimeout": "300"
+}'
+awslocal sqs create-queue --queue-name local-dramatiq-govuk-alerts --attributes '{
+  "RedrivePolicy": "{\"deadLetterTargetArn\":\"'"$DLQ_ARN"'\",\"maxReceiveCount\":\"3\"}",
+  "VisibilityTimeout": "300"
+}'
+awslocal sqs create-queue --queue-name local-dramatiq-broadcast-tasks --attributes '{
+  "RedrivePolicy": "{\"deadLetterTargetArn\":\"'"$DLQ_ARN"'\",\"maxReceiveCount\":\"3\"}",
+  "VisibilityTimeout": "300"
+}'
+awslocal sqs create-queue --queue-name local-dramatiq-high-priority-tasks --attributes '{
+  "RedrivePolicy": "{\"deadLetterTargetArn\":\"'"$DLQ_ARN"'\",\"maxReceiveCount\":\"3\"}",
+  "VisibilityTimeout": "300"
+}'
 
 # Create S3 buckets
 awslocal s3 mb s3://local-govuk-alerts
@@ -16,6 +30,7 @@ awslocal s3 mb s3://local-govuk-alerts-blue
 awslocal s3 mb s3://local-govuk-alerts-green
 awslocal s3 mb s3://local-govuk-alerts-archive
 awslocal s3 mb s3://local-area-sources
+awslocal s3 mb s3://local-miniscale-map-data
 
 # Enable static website hosting
 awslocal s3 website s3://local-govuk-alerts/ \
@@ -36,6 +51,10 @@ awslocal s3 cp /tmp/index.html s3://local-govuk-alerts-blue/index.html
 awslocal s3 cp /tmp/index.html s3://local-govuk-alerts-green/index.html
 awslocal s3 cp /area-data/"$AREAS_SOURCE_VERSION" s3://local-area-sources/"$AREAS_SOURCE_VERSION" --recursive
 awslocal s3 cp /area-data/population_data.csv s3://local-area-sources/population_data.csv
+
+if [ -f "/miniscale-map-data/map.tif" ]; then
+    awslocal s3 cp /miniscale-map-data/map.tif s3://local-miniscale-map-data/map.tif
+fi
 
 # Create ssm parameter to indicate current state of blue/green deployment
 awslocal ssm put-parameter \
